@@ -35,8 +35,10 @@ Good luck.
     ''')
 
 
-# checks for an integer more than 0 (allows <enter>)
-def int_check(question):
+# checks for an integer with optional upper /
+# lower limits and an optional exit code for infinite mode
+# / quitting the game
+def int_check(question, low=None, high=None, exit_code=None):
     while True:
         error = "Please enter an integer that is 1 or more"
 
@@ -64,22 +66,25 @@ def int_check(question):
 mode = "regular"
 rounds_played = 0
 
-
 print("🔼🔼🔼 Welcome to Higher Lower Game 🔻🔻🔻")
 print()
 
-ant_instructions = yes_no("Do you want to read the instructions?")
+want_instructions = yes_no("Do you want to read the instructions?")
 
 if want_instructions == "yes":
     instructions()
 
 # Ask user for number of rounds / infinite mode
-num_rounds = int_check("How many rounds would you like? Push <enter> for infinite mode:")
+num_rounds = int_check("Rounds <enter for infinite>: ",
+                       low=1, exit_code="")
 
 if num_rounds == "infinite":
     mode = "infinite"
     num_rounds = 5
 
+# Get Game parameters
+low_num = int_check("Low Number?")
+high_num = int_check("High number? ", low=low_num + 1)
 # Game loop starts here
 while rounds_played < num_rounds:
 
@@ -103,7 +108,6 @@ while rounds_played < num_rounds:
     # if users are in infinite mode, increase number of rounds!
     if mode == "infinite":
         num_rounds += 1
-
 
 # Game loop ends here
 
