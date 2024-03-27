@@ -54,7 +54,7 @@ def int_check(question, low=None, high=None, exit_code=None):
 
 # Check user guesses
 guess = ""
-while guess!= "xxx":
+while guess != "xxx":
     guess = int_check("Guess: ", low=0, high=10, exit_code="xxx")
     print(f"you guessed{guess}")
     print()
