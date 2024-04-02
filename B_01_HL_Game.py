@@ -49,13 +49,15 @@ def int_check(question, low=None, high=None, exit_code=None):
         to_check = input(question)
 
         # check for infinite mode
-        if to_check == "":
+        if to_check == exit_code:
             return "infinite"
         try:
             response = int(to_check)
 
-            # checks that the number is more than / equal to 13
-            if response < 1:
+            # checks that the number is valid
+            if response < low:
+                print(error)
+            elif response > high:
                 print(error)
             else:
                 return response

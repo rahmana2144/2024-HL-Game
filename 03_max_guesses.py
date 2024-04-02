@@ -30,10 +30,7 @@ for item in to_test:
     actual = calc_guesses(low_num, high_num)
 
     # compare actual and expected and output pass / fail
-    if actual ==expected:
+    if actual == expected:
         print(f"✅✅✅Passed! Case: {low_num}--{high_num}, expected: {expected}, received:{actual}✅✅✅")
     else:
         print(f"❌❌❌ Failed! Case: {low_num}--{high_num}, expected: {expected}, received:{actual}❌❌❌")
-
-
-
