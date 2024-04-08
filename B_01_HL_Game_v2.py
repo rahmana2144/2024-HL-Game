@@ -44,6 +44,8 @@ Good luck.
 # / quitting the game
 
 def int_check(question, low=None, high=None, exit_code=None):
+    # If any integer is allowed...
+    if low is None and high is None:
     while True:
         error = "Please enter an integer that is 1 or more"
 
@@ -121,11 +123,10 @@ guesses_allowed = calc_guesses(low_num, high_num)
 # Game loop starts here
 while rounds_played < num_rounds:
 
-    # Rounds headings
+    # Rounds headings (based on mode)
     if mode == "infinite":
         rounds_heading = f"\n Round  {rounds_played + 1} (Infinite mode) "
     else:
-
         rounds_heading = f"\n💿💿💿 Rounds {rounds_played + 1} of {num_rounds}💿💿💿"
 
     print(rounds_heading)
@@ -140,19 +141,106 @@ while rounds_played < num_rounds:
     print("Spoiler Alert", secret)  # remove this line after testing
 
     guess = ""
-    while guess != secret and guesses_used < guesses_allowed
-    user_choice = input("Choose: ")
 
-    if user_choice == "xxx":
+    # Guessing loop!~
+    while guess != secret and guesses_used < guesses_allowed:
+
+        # ask the user to guess the number...
+        guess = int_check("Guess: ", low_num, high_num, "xxx")
+
+        # check that they don't want to quit
+        if guess == "xxx":
+            # set end_game to use so that outer loop can be broken
+            end_game = "yes"
+            break
+
+        # check that guess is not a duplicate
+        if guess in already_guessed:
+            print(f"You've already guessed {guess}.   You've *still* used "
+                  f"{guesses_used} / {guesses_allowed} guesses ")
+            continue
+
+        # if guess is not a duplicate, add it to the 'already guessed' list
+        else:
+            already_guessed.append(guess)
+
+        # add one to the number of guesses used
+        guesses_used += 1
+
+        # compare the user's guess with the secret number set uo feedback statement
+
+        # If we have guesses left...
+        if guess < secret and guesses_used < guesses_allowed:
+            feedback = (f"Too low, please try a higher number. "
+                        f" You've used {guesses_used} / {guesses_allowed} guesses")
+        elif guess > secret and guesses_used < guesses_allowed:
+            feedback = (f"Too high, please try a lower number. "
+                        f"You've used {guesses_used} / {guesses_allowed} guesses")
+
+        # when the secret number is guesses, we have three different feedback
+        # options ( lucky / 'phew' / well done)
+        elif guess == secret:
+
+            if guesses_used == 1:
+                feedback = "🍀🍀 Lucky! You got it on the first guess. 🍀🍀"
+            elif guesses_used == guesses_allowed:
+                feedback = f"Phew! You got it in {guesses_used} guesses. "
+            else:
+                feedback = f"Well done! You guessed the secret number in {guesses_used} guesses. "
+
+        # if there are no guesses left!
+        else:
+            feedback = "Sorry - you have no more guesses. You lose this round!"
+
+        # print feedback to user
+        print(feedback)
+
+        # additional feedback (warn user that they are running out of guesses)
+        if guesses_used == guesses_allowed - 1:
+            print("\n💣💣💣Careful you have one guess left! 💣💣💣\n")
+
+        print()
+        print("End of round")
+
+    print()
+
+    # Round ends here
+
+    # if user has entered exit code, end game !!
+    if end_game == "yes":
         break
 
     rounds_played += 1
+
+# Game loop ends here
+
+    # Add round result to game history
+    history_feedback = f"Round {rounds_played}: {feedback}"
 
     # if users are in infinite mode, increase number of rounds!
     if mode == "infinite":
         num_rounds += 1
 
-# Game loop ends here
+# check users have played at least one round
+# before calculating statistics.
+if rounds_played > 0:
+    # Game history / Statistics area
 
+    # Calculate statistics
+    all_scores.sort()
+    best_score = all_scores[0]
+    worst_score = all_scores[-1]
+    average_score = sum(all_scores) / len(all_scores)
 
-# Game history / Statistics area
+    # Output the statistics
+    print("\n📊📊📊Statistics📊📊📊")
+    print(f"Best:{best_score} | Worst:{worst_score} | Average: {average_score:.2f} ")
+    print()
+
+    # Display the game history on request
+    see_history = yes_no("Do you want to see your game history? ")
+    if see_history == "yes":
+        print("\n⌛⌛⌛ Game History⌛⌛⌛")
+
+        for item in game_history:
+            print(item)
