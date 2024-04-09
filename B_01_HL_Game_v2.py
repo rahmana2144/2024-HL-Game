@@ -46,22 +46,36 @@ Good luck.
 def int_check(question, low=None, high=None, exit_code=None):
     # If any integer is allowed...
     if low is None and high is None:
-    while True:
-        error = "Please enter an integer that is 1 or more"
+        error = "Please enter an integer"
 
-        to_check = input(question)
+    # if the number needs to be more than an
+    # integer (ie: rounds / 'high number')
+    elif low is not None and high is None:
+        error = (f"Please enter an integer that is "
+                 f"more than / equal to {low}")
+
+    # if the number needs to be between low and high
+    else:
+        error = (f"Please enter an integer that"
+                 f" is between {low} and {high} (inclusive)")
+    while True:
+        response = input(question)
 
         # check for infinite mode
-        if to_check == exit_code:
-            return "infinite"
+        if response == exit_code:
+            return response
         try:
-            response = int(to_check)
+            response = int(response)
 
-            # checks that the number is valid
-            if response < low:
+            # Check the integer is not too low...
+            if low is not None and response < low:
                 print(error)
-            elif response > high:
+
+            # check response is more than the low number
+            elif high is not None and response > high:
                 print(error)
+
+            # if the response is valid, return it
             else:
                 return response
 
@@ -102,6 +116,8 @@ if want_instructions == "yes":
 num_rounds = int_check("Rounds <enter for infinite>: ",
                        low=1, exit_code="")
 
+print("num rounds", num_rounds)
+
 if num_rounds == "":
     mode = "infinite"
     num_rounds = 5
@@ -130,6 +146,7 @@ while rounds_played < num_rounds:
         rounds_heading = f"\n💿💿💿 Rounds {rounds_played + 1} of {num_rounds}💿💿💿"
 
     print(rounds_heading)
+    print()
 
     # Round starts here
     # Set guesses used to zero at the start of each round
@@ -162,6 +179,7 @@ while rounds_played < num_rounds:
 
         # if guess is not a duplicate, add it to the 'already guessed' list
         else:
+
             already_guessed.append(guess)
 
         # add one to the number of guesses used
@@ -191,18 +209,17 @@ while rounds_played < num_rounds:
         # if there are no guesses left!
         else:
             feedback = "Sorry - you have no more guesses. You lose this round!"
+            guesses_used = guesses_allowed + 1
 
         # print feedback to user
         print(feedback)
 
         # additional feedback (warn user that they are running out of guesses)
         if guesses_used == guesses_allowed - 1:
-            print("\n💣💣💣Careful you have one guess left! 💣💣💣\n")
+           print("\n💣💣💣Careful you have one guess left! 💣💣💣\n")
 
-        print()
-        print("End of round")
 
-    print()
+     print()
 
     # Round ends here
 
@@ -212,35 +229,46 @@ while rounds_played < num_rounds:
 
     rounds_played += 1
 
-# Game loop ends here
-
     # Add round result to game history
     history_feedback = f"Round {rounds_played}: {feedback}"
+    game_history.append(history_feedback)
+
+    # add guesses used to score list
+    all_scores.append(guesses_used)
 
     # if users are in infinite mode, increase number of rounds!
     if mode == "infinite":
         num_rounds += 1
 
-# check users have played at least one round
-# before calculating statistics.
-if rounds_played > 0:
-    # Game history / Statistics area
+    # Game loop ends here
 
-    # Calculate statistics
-    all_scores.sort()
-    best_score = all_scores[0]
-    worst_score = all_scores[-1]
-    average_score = sum(all_scores) / len(all_scores)
+    # check users have played at least one round
+    # before calculating statistics.
+    if rounds_played > 0:
+        # Game history / Statistics area
 
-    # Output the statistics
-    print("\n📊📊📊Statistics📊📊📊")
-    print(f"Best:{best_score} | Worst:{worst_score} | Average: {average_score:.2f} ")
-    print()
+        # Calculate statistics
+        all_scores.sort()
+        best_score = all_scores[0]
+        worst_score = all_scores[-1]
+        average_score = sum(all_scores) / len(all_scores)
 
-    # Display the game history on request
-    see_history = yes_no("Do you want to see your game history? ")
-    if see_history == "yes":
-        print("\n⌛⌛⌛ Game History⌛⌛⌛")
+        # Output the statistics
+        print("\n📊📊📊Statistics📊📊📊")
+        print(f"Best:{best_score} | Worst:{worst_score} | Average: {average_score:.2f} ")
+        print()
 
-        for item in game_history:
-            print(item)
+        # Display the game history on request
+        see_history = yes_no("Do you want to see your game history? ")
+        if see_history == "yes":
+            print("\n⌛⌛⌛ Game History⌛⌛⌛")
+
+            for item in game_history:
+                print(item)
+
+
+
+
+
+
+
