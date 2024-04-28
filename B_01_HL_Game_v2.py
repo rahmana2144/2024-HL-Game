@@ -9,7 +9,6 @@ def yes_no(question):
 
         # check use response, question
         # repeats if users say yes / no
-
         if response == "yes" or response == "y":
             return "yes"
         elif response == "no" or response == "n":
@@ -20,7 +19,6 @@ def yes_no(question):
 
 def instructions():
     print('''
-
 **** Instructions ****
 
 To begin, choose the number of rounds and either customise
@@ -34,8 +32,6 @@ Your goal is to try to guess the secret number without
 running out of guess.
 
 Good luck.
-
-
     ''')
 
 
@@ -51,19 +47,19 @@ def int_check(question, low=None, high=None, exit_code=None):
     # if the number needs to be more than an
     # integer (ie: rounds / 'high number')
     elif low is not None and high is None:
-        error = (f"Please enter an integer that is "
-                 f"more than / equal to {low}")
+        error = f"Please enter an integer that is more than / equal to {low}"
 
     # if the number needs to be between low and high
     else:
-        error = (f"Please enter an integer that"
-                 f" is between {low} and {high} (inclusive)")
+        error = f"Please enter an integer that is between {low} and {high}"
+
     while True:
-        response = input(question)
+        response = input(question).lower()
 
         # check for infinite mode
         if response == exit_code:
             return response
+
         try:
             response = int(response)
 
@@ -113,27 +109,26 @@ if want_instructions == "yes":
     instructions()
 
 # Ask user for number of rounds / infinite mode
-num_rounds = int_check("Rounds <enter for infinite>: ",
+num_rounds = int_check("Rounds? (Push <enter> for infinite mode): ",
                        low=1, exit_code="")
-
-print("num rounds", num_rounds)
 
 if num_rounds == "":
     mode = "infinite"
     num_rounds = 5
 
-# ask user if they want to customise the number range
-default_params = yes_no("Do you want to use the default game parameters? ")
+# asks user if they want to customise the number range
+print()
+default_params = yes_no("Would you like to use the default game parameters?: ")
 if default_params == "yes":
     low_num = 0
     high_num = 10
 
-#  allow user to choose the high / lower number
+# allow user to choose the high / low number
 else:
-    low_num = int_check("Low Number?")
-    high_num = int_check("High number? ", low=low_num + 1)
+    low_num = int_check("Low Number?: ")
+    high_num = int_check("High Number?: ", low=low_num + 1)
 
-# calculate the maximum number of guesses based on the low and high number
+# calculate the maximum number of guesses
 guesses_allowed = calc_guesses(low_num, high_num)
 
 # Game loop starts here
@@ -146,7 +141,6 @@ while rounds_played < num_rounds:
         rounds_heading = f"\n💿💿💿 Rounds {rounds_played + 1} of {num_rounds}💿💿💿"
 
     print(rounds_heading)
-    print()
 
     # Round starts here
     # Set guesses used to zero at the start of each round
@@ -155,10 +149,9 @@ while rounds_played < num_rounds:
 
     # Choose a 'secret' number between the low and high number
     secret = random.randint(low_num, high_num)
-    print("Spoiler Alert", secret)  # remove this line after testing
+    # print("Spoiler Alert", secret)
 
     guess = ""
-
     # Guessing loop!~
     while guess != secret and guesses_used < guesses_allowed:
 
@@ -179,7 +172,6 @@ while rounds_played < num_rounds:
 
         # if guess is not a duplicate, add it to the 'already guessed' list
         else:
-
             already_guessed.append(guess)
 
         # add one to the number of guesses used
@@ -196,9 +188,7 @@ while rounds_played < num_rounds:
                         f"You've used {guesses_used} / {guesses_allowed} guesses")
 
         # when the secret number is guesses, we have three different feedback
-        # options ( lucky / 'phew' / well done)
         elif guess == secret:
-
             if guesses_used == 1:
                 feedback = "🍀🍀 Lucky! You got it on the first guess. 🍀🍀"
             elif guesses_used == guesses_allowed:
@@ -216,10 +206,7 @@ while rounds_played < num_rounds:
 
         # additional feedback (warn user that they are running out of guesses)
         if guesses_used == guesses_allowed - 1:
-           print("\n💣💣💣Careful you have one guess left! 💣💣💣\n")
-
-
-     print()
+            print("💣💣💣Careful you have one guess left! 💣💣💣")
 
     # Round ends here
 
@@ -240,35 +227,29 @@ while rounds_played < num_rounds:
     if mode == "infinite":
         num_rounds += 1
 
-    # Game loop ends here
+# check users have played at least one round before calculating statistics
+if rounds_played > 0:
+    # Game History / Statistics area
 
-    # check users have played at least one round
-    # before calculating statistics.
-    if rounds_played > 0:
-        # Game history / Statistics area
+    # Calculate statistics
+    all_scores.sort()
+    best_score = all_scores[0]
+    worst_score = all_scores[-1]
+    average_score = sum(all_scores) / len(all_scores)
 
-        # Calculate statistics
-        all_scores.sort()
-        best_score = all_scores[0]
-        worst_score = all_scores[-1]
-        average_score = sum(all_scores) / len(all_scores)
+    # Output the statistics
+    print("\n📊📊 Game Statistics 📊📊")
+    print(f"Best: {best_score} | Worst: {worst_score} | Average: {average_score:.2f} ")
+    print()
 
-        # Output the statistics
-        print("\n📊📊📊Statistics📊📊📊")
-        print(f"Best:{best_score} | Worst:{worst_score} | Average: {average_score:.2f} ")
+    # Display the game history on request
+    see_history = yes_no("Do you want to see your game history?: ")
+    if see_history == "yes":
         print()
+        print("⌛⌛⌛ Game History⌛⌛⌛")
+        for item in game_history:
+            print(item)
 
-        # Display the game history on request
-        see_history = yes_no("Do you want to see your game history? ")
-        if see_history == "yes":
-            print("\n⌛⌛⌛ Game History⌛⌛⌛")
-
-            for item in game_history:
-                print(item)
-
-
-
-
-
-
-
+# End program if user hasn't played a round
+else:
+    print("🐔🐔 Oops - You chickened out! 🐔🐔")
